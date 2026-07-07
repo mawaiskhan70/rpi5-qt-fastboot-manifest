@@ -1,0 +1,16 @@
+# Yocto build artifacts
+build/
+downloads/
+sstate-cache/
+tmp/
+
+# kas fetched layers
+layers/
+
+# Personal Claude context
+CLAUDE.md
+
+# Editor
+.vscode/
+*.swp
+*~
