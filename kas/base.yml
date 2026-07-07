@@ -1,0 +1,86 @@
+# kas/base.yml
+# Base layer configuration for rpi5-qt-fastboot
+# Yocto Scarthgap (5.0 LTS) — supported until April 2028
+#
+# This file pins every upstream layer to an exact scarthgap branch.
+# All other kas configs include this file as their foundation.
+
+header:
+  version: 14
+
+machine: raspberrypi5
+distro: poky
+target: rpi5-qt-fastboot-image
+
+repos:
+  # poky — core Yocto/BitBake + reference distro
+  poky:
+    url: https://git.yoctoproject.org/poky
+    refspec: scarthgap
+    layers:
+      meta:
+      meta-poky:
+
+  # meta-openembedded — additional recipe collections
+  # meta-oe is required by meta-raspberrypi and meta-qt6
+  meta-openembedded:
+    url: https://github.com/openembedded/meta-openembedded
+    refspec: scarthgap
+    layers:
+      meta-oe:
+      meta-python:
+      meta-networking:
+      meta-multimedia:
+
+  # meta-raspberrypi — RPi5 BSP: kernel, firmware, GPU drivers
+  meta-raspberrypi:
+    url: https://github.com/agherzan/meta-raspberrypi
+    refspec: scarthgap
+    layers:
+      meta-raspberrypi:
+
+  # meta-qt6 — Qt6 recipes including qtbase, qtdeclarative, qtquickcontrols2
+  meta-qt6:
+    url: https://code.qt.io/yocto/meta-qt6.git
+    refspec: 6.7
+    layers:
+      meta-qt6:
+
+  # Your custom layer
+  meta-rpi5-qt-fastboot:
+    url: https://github.com/mawaiskhan70/meta-rpi5-qt-fastboot.git
+    refspec: main
+    layers:
+      meta-rpi5-qt-fastboot:
+
+local_conf_header:
+  # --- Machine / display stack ---
+  rpi5-display: |
+    # Use VC4 KMS/DRM — required for Qt EGLFS direct rendering
+    # This enables the V3D GPU driver and disables legacy firmware KMS
+    MACHINE_FEATURES:append = " vc4graphics"
+
+  # --- Qt platform ---
+  qt-platform: |
+    # Set EGLFS as default Qt platform — no Weston, no X11
+    # Qt talks directly to KMS/DRM via eglfs_kms backend
+    QT_QPA_PLATFORM = "eglfs"
+
+  # --- Strip unused distro features ---
+  distro-features: |
+    # Remove compositor and display server stacks entirely
+    # wayland/x11/weston add packages and init overhead we don't want
+    DISTRO_FEATURES:remove = "wayland x11 weston"
+    # Keep what we need: opengl for EGLFS, systemd for init (for now)
+    DISTRO_FEATURES:append = " opengl systemd"
+    VIRTUAL-RUNTIME_init_manager = "systemd"
+
+  # --- Build performance ---
+  build-perf: |
+    # Parallel build tuning — adjust BB_NUMBER_THREADS to your CPU core count
+    BB_NUMBER_THREADS ?= "6"
+    PARALLEL_MAKE ?= "-j6"
+    # Keep downloads between builds
+    DL_DIR ?= "${TOPDIR}/../downloads"
+    # Keep sstate-cache between builds — makes rebuilds fast
+    SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"
