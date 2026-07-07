@@ -1,0 +1,25 @@
+# kas/rpi5-nvme.yml
+# Top-level kas config for NVMe target (M.2 HAT+ on RPi5)
+#
+# Usage:
+#   kas-container build kas/rpi5-nvme.yml
+#
+# Inherits everything from rpi5-sd.yml (which inherits from base.yml)
+# Only adds the NVMe device tree overlay and corrects image naming.
+
+header:
+  version: 14
+  includes:
+    - file: rpi5-sd.yml
+
+local_conf_header:
+  # --- NVMe overlay ---
+  nvme-overlay: |
+    # Enables the PCIe/NVMe controller on RPi5 M.2 HAT+
+    # Without this overlay the kernel never brings up the PCIe bus
+    # and the NVMe drive is invisible to the system
+    RPI_EXTRA_CONFIG += "dtoverlay=nvme \n"
+
+  # --- Override image name suffix from rpi5-sd.yml ---
+  image-naming: |
+    IMAGE_NAME_SUFFIX = "-nvme"
