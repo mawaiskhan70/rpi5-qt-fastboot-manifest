@@ -72,7 +72,7 @@ local_conf_header:
     # wayland/x11/weston add packages and init overhead we don't want
     DISTRO_FEATURES:remove = "wayland x11 weston"
     # Keep what we need: opengl for EGLFS, systemd for init (for now)
-    DISTRO_FEATURES:append = " opengl systemd"
+    DISTRO_FEATURES:append = " opengl systemd usrmerge"
     VIRTUAL-RUNTIME_init_manager = "systemd"
 
   # --- Build performance ---
