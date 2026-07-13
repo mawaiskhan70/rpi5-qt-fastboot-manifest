@@ -2,30 +2,20 @@
 # Top-level kas config for SD card target
 #
 # Usage:
-#   kas-container build kas/rpi5-sd.yml
-#
-# This file is intentionally thin — all layer pins and common
-# config live in base.yml. Only SD-card specific settings live here.
+#   ./scripts/build.sh sd
 
 header:
-  version: 14
+  version: 19
   includes:
-    - file: base.yml
+    - kas/base.yml
 
 local_conf_header:
-  # --- SD card boot config ---
   sd-boot: |
-    # SD card specific config.txt settings injected via Yocto
-    # boot_delay=0 removes the default 1 second firmware wait
-    # disable_splash removes the rainbow splash screen
-    # camera/display auto_detect probe hardware at boot — disable for speed
     RPI_EXTRA_CONFIG += " \
         boot_delay=0 \n \
         disable_splash=1 \n \
         camera_auto_detect=0 \n \
         display_auto_detect=0 \n \
     "
-
-  # --- Image name suffix so SD and NVMe images are distinguishable ---
   image-naming: |
     IMAGE_NAME_SUFFIX = "-sd"

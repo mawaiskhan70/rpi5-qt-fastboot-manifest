@@ -15,3 +15,10 @@ CLAUDE.md
 *.swp
 *~
 kas-container
+# kas cloned layers — fetched at build time
+meta-openembedded/
+meta-raspberrypi/
+meta-qt6/
+poky/
+.kas_shell_history
+meta-rpi5-qt-fastboot/

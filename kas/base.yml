@@ -6,7 +6,7 @@
 # All other kas configs include this file as their foundation.
 
 header:
-  version: 14
+  version: 19
 
 machine: raspberrypi5
 distro: poky
@@ -37,21 +37,21 @@ repos:
     url: https://github.com/agherzan/meta-raspberrypi
     refspec: scarthgap
     layers:
-      meta-raspberrypi:
+      .:
 
   # meta-qt6 — Qt6 recipes including qtbase, qtdeclarative, qtquickcontrols2
   meta-qt6:
     url: https://code.qt.io/yocto/meta-qt6.git
-    refspec: 6.7
+    refspec: "6.7"
     layers:
-      meta-qt6:
+      .:
 
   # Your custom layer
   meta-rpi5-qt-fastboot:
     url: https://github.com/mawaiskhan70/meta-rpi5-qt-fastboot.git
     refspec: main
     layers:
-      meta-rpi5-qt-fastboot:
+      .:
 
 local_conf_header:
   # --- Machine / display stack ---
@@ -84,3 +84,9 @@ local_conf_header:
     DL_DIR ?= "${TOPDIR}/../downloads"
     # Keep sstate-cache between builds — makes rebuilds fast
     SSTATE_DIR ?= "${TOPDIR}/../sstate-cache"
+  # --- License acceptance ---
+  licenses: |
+    # Accept restricted licenses required by RPi firmware packages
+    # synaptics-killswitch: required by linux-firmware-rpidistro
+    # Broadcom firmware (WiFi/BT) also has restricted licenses
+    LICENSE_FLAGS_ACCEPTED = "synaptics-killswitch"
