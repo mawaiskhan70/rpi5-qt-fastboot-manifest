@@ -56,12 +56,12 @@ cd "${REPO_ROOT}"
 case "${COMMAND}" in
     build)
         echo "==> Building target: ${TARGET} using ${KAS_CONFIG}"
-        "${KAS_CONTAINER}" build "${KAS_CONFIG}"
+        KAS_FORCE_CHECKOUT=1 "${KAS_CONTAINER}" build "${KAS_CONFIG}"
         ;;
     shell)
         echo "==> Dropping into kas shell for target: ${TARGET}"
         echo "    BitBake is ready — run: bitbake <recipe-name>"
-        "${KAS_CONTAINER}" shell "${KAS_CONFIG}"
+        KAS_FORCE_CHECKOUT=1 "${KAS_CONTAINER}" shell "${KAS_CONFIG}"
         ;;
     bitbake)
         RECIPE="${3}"
@@ -71,7 +71,7 @@ case "${COMMAND}" in
             exit 1
         fi
         echo "==> Building recipe: ${RECIPE} for target: ${TARGET}"
-        "${KAS_CONTAINER}" shell "${KAS_CONFIG}" -c "bitbake ${RECIPE}"
+        KAS_FORCE_CHECKOUT=1 "${KAS_CONTAINER}" shell "${KAS_CONFIG}" -c "bitbake ${RECIPE}"
         ;;
     *)
         echo "ERROR: Unknown command '${COMMAND}'."
